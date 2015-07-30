@@ -38,7 +38,7 @@ def _get_keys_prefixes(li):
     return (keys, prefixes)
 
 
-@attr(tags=[tag.DATA_PLANE, tag.OBJECT_IO])
+@attr(tags=[tag.DATA_PLANE, tag.OBJECT_LIST])
 class TestObjectList(testbase.EcsDataPlaneTestBase):
     """
     Post several objects and list them within a bucket
