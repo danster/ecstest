@@ -38,7 +38,36 @@ def _get_keys_prefixes(li):
     return (keys, prefixes)
 
 
-@attr(tags=[tag.DATA_PLANE, tag.OBJECT_LIST])
+def _validate_object_list(bucket, prefix, delimiter, marker, max_keys,
+                          is_truncated, check_objs, check_prefixes,
+                          next_marker):
+    """
+    validate object with combined parameters.
+    """
+
+    li = bucket.get_all_keys(delimiter=delimiter,
+                             prefix=prefix,
+                             max_keys=max_keys,
+                             marker=marker)
+
+    eq(li.is_truncated, is_truncated)
+    eq(li.next_marker, next_marker)
+
+    (keys, prefixes) = _get_keys_prefixes(li)
+
+    eq(len(keys), len(check_objs))
+    eq(len(prefixes), len(check_prefixes))
+
+    objs = [e.name for e in keys]
+    eq(objs, check_objs)
+
+    prefix_names = [e.name for e in prefixes]
+    eq(prefix_names, check_prefixes)
+
+    return li.next_marker
+
+
+@attr(tags=[tag.DATA_PLANE, tag.OBJECT_IO])
 class TestObjectList(testbase.EcsDataPlaneTestBase):
     """
     Post several objects and list them within a bucket
@@ -220,3 +249,88 @@ class TestObjectList(testbase.EcsDataPlaneTestBase):
             names = [e.name for e in keys]
             eq(names, keynames)
             eq(prefixes, [])
+
+    @triage
+    # port from test case: test_bucket_list_delimiter_none() of https://
+    #   github.com/ceph/s3-tests/blob/master/s3tests/functional/test_s3.py
+    def test_object_list_delimiter_none(self):
+        '''
+        operation: list under delimiter
+        assertion: unspecified delimiter defaults to none
+        '''
+        keyname1 = keyname.get_unique_key_name()
+        keyname2 = keyname.get_unique_key_name()
+        keyname3 = keyname.get_unique_key_name()
+        keyname4 = keyname.get_unique_key_name()
+
+        keynames = [keyname1, keyname2, keyname3, keyname4]
+        self._create_keys(keys=keynames)
+
+        li = self.bucket.list()
+        eq(li.delimiter, '')
+
+        keynames = sorted(keynames)
+
+        (keys, prefixes) = _get_keys_prefixes(li)
+        names = [e.name for e in keys]
+        eq(names, keynames)
+        eq(prefixes, [])
+
+    @triage
+    # ecs NextMarker issue: the response NextMarker is not consistent with
+    #   aws-s3 that's NextMarker is the last element of Keys.
+    # fakes3 MaxKeys issue, ecs marker issue, ecs NextMarker issue
+    @not_supported('fakes3', 'ecs')
+    # port from test case: test_bucket_list_delimiter_prefix() of https://
+    #   github.com/ceph/s3-tests/blob/master/s3tests/functional/test_s3.py
+    def test_object_list_delimiter_prefix(self):
+        '''
+        operation: list under delimiter
+        assertion: prefixes in multi-component object names
+        '''
+        self._create_keys(keys=['asdf', 'boo/bar', 'boo/baz/xyzzy',
+                                'cquux/thud', 'cquux/bla'])
+
+        bucket = self.bucket
+        delim = '/'
+        marker = ''
+        prefix = ''
+
+        marker = _validate_object_list(bucket, prefix, delim, '', 1,
+                                       True, ['asdf'], [], 'asdf')
+        marker = _validate_object_list(bucket, prefix, delim, marker, 1,
+                                       True, [], ['boo/'], 'boo/')
+        marker = _validate_object_list(bucket, prefix, delim, marker, 1,
+                                       False, [], ['cquux/'], None)
+
+        marker = _validate_object_list(bucket, prefix, delim, '', 2,
+                                       True, ['asdf'], ['boo/'], 'boo/')
+        marker = _validate_object_list(bucket, prefix, delim, marker, 2,
+                                       False, [], ['cquux/'], None)
+
+        prefix = 'boo/'
+
+        marker = _validate_object_list(bucket, prefix, delim, '', 1,
+                                       True, ['boo/bar'], [], 'boo/bar')
+        marker = _validate_object_list(bucket, prefix, delim, marker, 1,
+                                       False, [], ['boo/baz/'], None)
+        marker = _validate_object_list(bucket, prefix, delim, '', 2,
+                                       False, ['boo/bar'], ['boo/baz/'], None)
+
+    @triage
+    # port from test case: test_bucket_list_prefix_basic() of https://
+    #   github.com/ceph/s3-tests/blob/master/s3tests/functional/test_s3.py
+    def test_object_list_prefix_basic(self):
+        '''
+        operation: list under prefix
+        assertion: returns only objects under prefix
+        '''
+        self._create_keys(keys=['foo/bar', 'foo/baz', 'quux'])
+
+        li = self.bucket.list(prefix='foo/')
+        eq(li.prefix, 'foo/')
+
+        (keys, prefixes) = _get_keys_prefixes(li)
+        names = [e.name for e in keys]
+        eq(names, ['foo/bar', 'foo/baz'])
+        eq(prefixes, [])
