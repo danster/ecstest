@@ -9,9 +9,9 @@
 # it is provided by or on behalf of EMC.
 # __CR__
 
-'''
+"""
 Author: Rubicon ISE team
-'''
+"""
 
 from http.client import HTTPConnection, HTTPSConnection
 from urllib.parse import urlparse
@@ -201,8 +201,8 @@ class TestBucketAccess(testbase.EcsDataPlaneTestBase):
         key_name = keyname.get_unique_key_name()
         key = bucket.new_key(key_name)
         e = assert_raises(S3ResponseError,
-                           key.set_contents_from_string,
-                           key_name)
+                          key.set_contents_from_string,
+                          key_name)
         eq(e.status, 404)
         eq(e.reason, 'Not Found')
         eq(e.error_code, 'NoSuchBucket')
