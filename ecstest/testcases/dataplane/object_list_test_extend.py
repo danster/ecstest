@@ -9,9 +9,9 @@
 # it is provided by or on behalf of EMC.
 # __CR__
 
-'''
+"""
 Author: Rubicon ISE team
-'''
+"""
 
 from boto.s3.bucket import Bucket
 from boto.s3.key import Key
@@ -254,10 +254,10 @@ class TestObjectList(testbase.EcsDataPlaneTestBase):
     # port from test case: test_bucket_list_delimiter_none() of https://
     #   github.com/ceph/s3-tests/blob/master/s3tests/functional/test_s3.py
     def test_object_list_delimiter_none(self):
-        '''
+        """
         operation: list under delimiter
         assertion: unspecified delimiter defaults to none
-        '''
+        """
         keyname1 = keyname.get_unique_key_name()
         keyname2 = keyname.get_unique_key_name()
         keyname3 = keyname.get_unique_key_name()
@@ -284,10 +284,10 @@ class TestObjectList(testbase.EcsDataPlaneTestBase):
     # port from test case: test_bucket_list_delimiter_prefix() of https://
     #   github.com/ceph/s3-tests/blob/master/s3tests/functional/test_s3.py
     def test_object_list_delimiter_prefix(self):
-        '''
+        """
         operation: list under delimiter
         assertion: prefixes in multi-component object names
-        '''
+        """
         self._create_keys(keys=['asdf', 'boo/bar', 'boo/baz/xyzzy',
                                 'cquux/thud', 'cquux/bla'])
 
@@ -321,10 +321,10 @@ class TestObjectList(testbase.EcsDataPlaneTestBase):
     # port from test case: test_bucket_list_prefix_basic() of https://
     #   github.com/ceph/s3-tests/blob/master/s3tests/functional/test_s3.py
     def test_object_list_prefix_basic(self):
-        '''
+        """
         operation: list under prefix
         assertion: returns only objects under prefix
-        '''
+        """
         self._create_keys(keys=['foo/bar', 'foo/baz', 'quux'])
 
         li = self.bucket.list(prefix='foo/')
@@ -334,3 +334,66 @@ class TestObjectList(testbase.EcsDataPlaneTestBase):
         names = [e.name for e in keys]
         eq(names, ['foo/bar', 'foo/baz'])
         eq(prefixes, [])
+
+    @triage
+    # just testing that we can do the delimeter and prefix logic on non-slashes
+    # port from test case: test_bucket_list_prefix_alt() of https://
+    #   github.com/ceph/s3-tests/blob/master/s3tests/functional/test_s3.py
+    def test_object_list_prefix_alt(self):
+        """
+        operation: list under prefix
+        assertion: returns only objects under prefix
+        """
+        self._create_keys(keys=['bar', 'baz', 'foo'])
+
+        li = self.bucket.list(prefix='ba')
+        eq(li.prefix, 'ba')
+
+        (keys, prefixes) = _get_keys_prefixes(li)
+        names = [e.name for e in keys]
+        eq(names, ['bar', 'baz'])
+        eq(prefixes, [])
+
+    @triage
+    # port from test case: test_bucket_list_prefix_basic() of https://
+    #   github.com/ceph/s3-tests/blob/master/s3tests/functional/test_s3.py
+    def test_object_list_special_prefix(self):
+        """
+        operration: create and list using special prefix
+        assertion: listing works correctly
+        """
+        key_names = ['_bla/1', '_bla/2', '_bla/3', '_bla/4', 'abcd']
+        self._create_keys(keys=key_names)
+
+        li = self.bucket.get_all_keys()
+        eq(len(li), 5)
+
+        li2 = self.bucket.get_all_keys(prefix='_bla/')
+        eq(len(li2), 4)
+
+    @triage
+    # port from test cases: test_bucket_list_prefix_unreadable() and
+    #   test_bucket_list_prefix_not_exist() of https://github.com/ceph/
+    #   s3-tests/blob/master/s3tests/functional/test_s3.py
+    def test_object_list_prefix_invalid(self):
+        """
+        operation: list under unreadable prefix or unused prefix
+        assertion: unreadable and unused prefix can be specified
+        """
+        keyname1 = keyname.get_unique_key_name()
+        keyname2 = keyname.get_unique_key_name()
+        keyname3 = keyname.get_unique_key_name()
+        keyname4 = keyname.get_unique_key_name()
+
+        keynames = [keyname1, keyname2, keyname3, keyname4]
+        self._create_keys(keys=keynames)
+
+        keynames = sorted(keynames)
+
+        for _prefix in ['\x0a', '/']:
+            li = self.bucket.list(prefix=_prefix)
+            eq(li.prefix, _prefix)
+
+            (keys, prefixes) = _get_keys_prefixes(li)
+            eq(keys, [])
+            eq(prefixes, [])
