@@ -355,7 +355,7 @@ class TestObjectList(testbase.EcsDataPlaneTestBase):
         eq(prefixes, [])
 
     @triage
-    # port from test case: test_bucket_list_prefix_basic() of https://
+    # port from test case: test_bucket_list_special_prefix() of https://
     #   github.com/ceph/s3-tests/blob/master/s3tests/functional/test_s3.py
     def test_object_list_special_prefix(self):
         """
