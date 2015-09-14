@@ -11,3 +11,5 @@ multi-mechanize
 ipaddress>=1.0.7
 etchosts
 isodate
+pytz>=2015.4
+bunch
