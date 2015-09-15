@@ -2,17 +2,17 @@
 
 A test report for testing [EMC ECS](https://www.emc.com/storage/ecs-appliance/index.htm) deployments.
 
-some points need to be known before reading the documents in report folder.
+Some points need to be known before reading the documents in report folder.
 
 - All test cases are ported from [cephs3test](https:github.com/ceph/s3-tests/blob/master/s3tests/functional/test_s3.py).
 - Some test cases of cephs3test were not ported for some reasons, as follows:
   - **Blocked**: the test case which works under two test accounts.
   - **Disabled**: the test case which can't work correctly in any environment of awss3, fakes3, ecs at present.
   - **Skipped**: the test case which can't work owning to lacking some configuration parameters.
-- the file `testcase_table.md` lists all test cases of ecstest and related test results on awss3, fakes3 and ecs.
-- the file `ecs_issues.md` lists all ecs issues found when testing the test cases of ecstest.
+- The file `testcase_table.md` lists all test cases of ecstest and related test results on awss3, fakes3 and ecs.
+- The file `ecs_issues.md` lists all ecs issues found when testing the test cases of ecstest.
 
-### the unported test cases of [cephs3test](https:github.com/ceph/s3-tests/blob/master/s3tests/functional/test_s3.py) list as follows:
+The unported test cases of [cephs3test](https:github.com/ceph/s3-tests/blob/master/s3tests/functional/test_s3.py) list as follows:
 
 |test case name| reason |
 |--------------|--------|

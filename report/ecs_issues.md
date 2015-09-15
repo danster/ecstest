@@ -19,7 +19,7 @@
 |ecs Error|ecs does not return S3ResponseError when upload.complete\_upload|object\_multipart\_test.py|test\_abort\_multipart\_upload<br>test\_list\_multipart\_upload||
 
 
-####tips
+####Tips
  
-- `issue name` column just describes the issue briefly, which isn't regular.
+- `issue name` column just describes the issue briefly, not regularly.
 

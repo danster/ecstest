@@ -180,7 +180,7 @@
 |object\_post\_test.py|test\_post\_object\_upload\_size\_below\_minimum|test\_post\_object\_upload\_size\_below\_minimum|Y|N|Y||
 
 
-####tips
+####Tips
  
 - `port from` column indicates which test case ported from cephs3test by test case of ecstest.
 - In `support awss3`, `support fakes3`, `support ecs` columns, `Y` for support, `N` for not support.
