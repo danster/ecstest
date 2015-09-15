@@ -17,3 +17,9 @@
 |ecs Error|ecs does not return S3ResponseError when upload.complete\_upload|	object\_multipart\_test.py|test\_multipart\_upload\_size\_too\_small||
 |ecs 400 Error|ecs returns 400 InvalidRequest when upload.complete\_upload|object\_multipart\_test.py|test\_multipart\_upload\_empty||
 |ecs Error|ecs does not return S3ResponseError when upload.complete\_upload|object\_multipart\_test.py|test\_abort\_multipart\_upload<br>test\_list\_multipart\_upload||
+
+
+####tips
+ 
+- `issue name` column just describes the issue briefly, which isn't regular.
+

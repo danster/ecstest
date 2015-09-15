@@ -178,3 +178,10 @@
 |object\_post\_test.py|test\_post\_object\_missing\_content\_length\_argument|test\_post\_object\_missing\_content\_length\_argument|Y|N|Y||
 |object\_post\_test.py|test\_post\_object\_invalid\_content\_length\_argument|test\_post\_object\_invalid\_content\_length\_argument|Y|N|Y||
 |object\_post\_test.py|test\_post\_object\_upload\_size\_below\_minimum|test\_post\_object\_upload\_size\_below\_minimum|Y|N|Y||
+
+
+####tips
+ 
+- `port from` column indicates which test case ported from cephs3test by test case of ecstest.
+- In `support awss3`, `support fakes3`, `support ecs` columns, `Y` for support, `N` for not support.
+
