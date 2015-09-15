@@ -121,6 +121,14 @@ class TestBucketACL(testbase.EcsDataPlaneTestBase):
         eq(isinstance(bucket, Bucket), True)
 
         return bucket
+    
+    def _create_connection_bad_auth(self, aws_access_key_id='badauth'):
+        # We're going to need to manually build a connection using
+        # bad authorization info.
+
+        conn = self.get_conn(aws_access_key_id=aws_access_key_id,
+                             aws_secret_access_key='bad_access_key__')
+        return conn
 
     @triage
     # fakes3 bucket acl issue: the policy.acl of bucket is a 'NoneType' object,
@@ -511,14 +519,6 @@ class TestBucketACL(testbase.EcsDataPlaneTestBase):
         bucket = self._create_bucket()
         for i in range(10):
             self._test_bucket_acls_changes_persistent(bucket)
-
-    def _create_connection_bad_auth(self, aws_access_key_id='badauth'):
-        # We're going to need to manually build a connection using
-        # bad authorization info.
-
-        conn = self.get_conn(aws_access_key_id=aws_access_key_id,
-                             aws_secret_access_key='bad_access_key__')
-        return conn
 
     @triage
     # awss3 issue: SAXParseException was raised when conn.get_all_buckets

@@ -68,7 +68,7 @@ class TestObjectPutPost(testbase.EcsDataPlaneTestBase):
         return policy, signature
 
     @triage
-    # ecs 400 issue: ecs returns 400 but 204 when requests.post()
+    # ecs 400 issue: ecs always returns 400 error when requests.post()
     @not_supported('ecs')
     # port from test case:
     #   test_post_object_anonymous_request() of https://

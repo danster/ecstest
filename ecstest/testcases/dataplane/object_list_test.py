@@ -792,7 +792,7 @@ class TestObjectList(testbase.EcsDataPlaneTestBase):
     # ecs Owner issue: the response xml of listing objects of bucket doesn't
     #   contain the 'Owner' element, that is not consistent with aws-s3 which
     #   contains 'Owner'.
-    @not_supported('ecs')  # ecs Owner issue
+    @not_supported('ecs')
     # port from test cases: test_bucket_list_return_data() and
     #   test_bucket_list_object_time() of https://github.com/ceph/s3-tests/
     #   blob/master/s3tests/functional/test_s3.py
