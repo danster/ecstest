@@ -36,7 +36,7 @@ from ecstest.logger import logger
 @attr(tags=[tag.DATA_PLANE, tag.BUCKET_MGMT])
 class TestBucketAccess(testbase.EcsDataPlaneTestBase):
     """
-    Access a bucket with several conditions and test the result of the response
+    Access a bucket with several conditions and test the result of response
     """
 
     def setUp(self):

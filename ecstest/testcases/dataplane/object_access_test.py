@@ -86,7 +86,7 @@ def _simple_http_req_100_cont(host, port, is_secure, method, resource):
 @attr(tags=[tag.DATA_PLANE, tag.OBJECT_IO])
 class TestObjectAccess(testbase.EcsDataPlaneTestBase):
     """
-    Access a object with several conditions and test the result of the response
+    Access a object with several conditions and test the result of response
     """
 
     def setUp(self):
